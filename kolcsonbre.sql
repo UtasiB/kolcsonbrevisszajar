@@ -54,7 +54,7 @@ CREATE TABLE `rentals` (
 -- Tábla szerkezet ehhez a táblához `user`
 --
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `ID` int(11) NOT NULL,
   `name` varchar(40) NOT NULL,
   `email` varchar(40) NOT NULL,
