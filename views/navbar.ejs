@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+
+        <!-- ha nem vagyunk bejelentkezve -->
+        <% if (!session.isLoggedIn) { %>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/">Bejelentkezés</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/reg">Regisztráció</a>
+          </li>
+        </ul>
+        <% } %>
+        
+        <!-- ha user-ként vagyunk bejelentkezve -->
+        <% if (session.isLoggedIn) { %>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/listing">Tárgyak</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/loan">Kölcsönzések</a>
+            </li>
+          </ul>
+          <% } %>
+        <!-- ha admin-ként vagyunk bejelentkezve -->
+        <% if (session.userRole == "admin") { %>
+         
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/users">Felhasználók [ADMIN]</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/loans">Összes kölcsönzés [ADMIN]</a>
+            </li>
+        </ul>
+        <% } %>
+
+    </div>
+    </div>
+  </nav>

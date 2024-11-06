@@ -1,0 +1,27 @@
+<%- include('header') %>
+
+<h4 class="mb-3">Regisztráció</h4>
+
+<%- include('message') %>
+
+<form action="/users/reg" method="post">
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" name="name" placeholder="">
+        <label for="name">Felhasználó név</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" name="email" placeholder="">
+        <label for="email">Ímél cím</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" name="passwd" placeholder="">
+        <label for="passwd">Jelszó</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" name="confirm" placeholder="">
+        <label for="confirm">Jelszó megerősítés</label>
+    </div>
+    <input class="btn btn-primary mb-3" type="submit" value="Regisztráció" name="regBtn">
+</form>
+
+<%- include('footer') %>

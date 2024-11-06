@@ -1,0 +1,15 @@
+<h4 class="mb-3">Bejelentkezés</h4>
+
+<%- include('message') %>
+
+<form action="/users/login" method="post">
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" name="email" placeholder="">
+        <label for="email">Ímél cím</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" name="passwd" placeholder="">
+        <label for="passwd">Jelszó</label>
+    </div>
+    <input class="btn btn-primary mb-3" type="submit" value="Bejelentkezés" name="loginBtn">
+</form>

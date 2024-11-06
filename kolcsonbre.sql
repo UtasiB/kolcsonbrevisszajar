@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Nov 06. 09:27
+-- Létrehozás ideje: 2024. Nov 06. 09:35
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -58,6 +58,7 @@ CREATE TABLE `user` (
   `ID` int(11) NOT NULL,
   `name` varchar(40) NOT NULL,
   `email` varchar(40) NOT NULL,
+  `passwd` varchar(40) NOT NULL,
   `membership_date` date NOT NULL,
   `role` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
@@ -66,9 +67,9 @@ CREATE TABLE `user` (
 -- A tábla adatainak kiíratása `user`
 --
 
-INSERT INTO `user` (`ID`, `name`, `email`, `membership_date`, `role`) VALUES
-(1, 'Bali', 'bali@turr.hu', '2024-11-06', 'admin'),
-(2, 'Ári ', 'ari@turr.hu', '2024-11-06', 'admin');
+INSERT INTO `user` (`ID`, `name`, `email`, `passwd`, `membership_date`, `role`) VALUES
+(1, 'Ári', 'ari@turr.hu', '29b904ffa51141df00d6afedd88f2f18936511e2', '2024-11-05', 'admin'),
+(2, 'Bali', 'bali@turr.hu', '342f5bba34b5cc82ecc06d9b059ad57bd0dac5cd', '2024-11-05', 'admin');
 
 --
 -- Indexek a kiírt táblákhoz
