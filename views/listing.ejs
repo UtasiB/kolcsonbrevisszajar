@@ -1,0 +1,22 @@
+<%- include('header') %>
+<%- include('message') %>
+<div class="container">
+    <h1>Available Items</h1>
+    <div class="card-container">
+        <% items.forEach(function(item) { %>
+            <% if (item.available > 0) { %>
+                <div class="card mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= item.title %></h5>
+                        <p class="card-text">Type: <%= item.type %></p>
+                        <form action="/loans/kolcsonzes" method="post">
+                            <input type="hidden" name="cardID" value="<%= item.ID %>">
+                            <input class="btn btn-primary mb-3" type="submit" value="Kölcsönzés">
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+        <% }); %>
+    </div>
+</div>
+<%- include('footer') %>

@@ -29,26 +29,35 @@ router.get('/reg', (req, res) => {
     });
 });
 
-router.get('/listing', (req, res)=>{
-    if (req.session.isLoggedIn){
-        ejs.renderFile('./views/listing.ejs', { session: req.session}, (err, html)=>{
-            if (err){
+router.get('/listing', (req, res) => {
+    if (req.session.isLoggedIn) {
+        db.query('SELECT * FROM items', (err, results) => {
+            if (err) {
                 console.log(err);
-                return
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/');
+                return;
             }
-            req.session.msg = '';
-            res.send(html);
+            ejs.renderFile('./views/listing.ejs', { session: req.session, items: results }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
         });
-        return
+        return;
     }
     res.redirect('/');
 });
 
-router.get('/loan', (req, res)=>{
+router.get('/loans', (req, res)=>{
     if (req.session.isLoggedIn){
 
        
-        ejs.renderFile('./views/loan.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
+        ejs.renderFile('./views/loans.ejs', { session: req.session}, (err, html)=>{
             if (err){
                 console.log(err);
                 return
@@ -76,22 +85,39 @@ router.get('/logout', (req, res)=>{
 
 });
 
-//Admin funkciók
 
-router.get('/loans', (req, res)=>{
-    if (req.session.isLoggedIn){
-
-       
-        ejs.renderFile('./views/loans.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
-            if (err){
+router.get('/loan', (req, res) => {
+    if (req.session.isLoggedIn) {
+        const query = `
+            SELECT rentals.*, items.title 
+            FROM rentals 
+            JOIN items ON rentals.itemID = items.ID 
+            WHERE rentals.userID = ?
+        `;
+        db.query(query, [req.session.userID], (err, results) => {
+            if (err) {
                 console.log(err);
-                return
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/');
+                return;
             }
-            req.session.msg = '';
-            res.send(html);
+            results.forEach(item => {
+                item.rental_date = moment(item.rental_date).format('YYYY.MM.DD.');
+                if (item.return_date) {
+                    item.return_date = moment(item.return_date).format('YYYY.MM.DD.');
+                }
+            });
+            ejs.renderFile('./views/loan.ejs', { session: req.session, rentals: results }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
         });
-        return
-        
+        return;
     }
     res.redirect('/');
 });
@@ -101,7 +127,7 @@ router.get('/users', (req, res)=>{
     if (req.session.isLoggedIn){
 
        
-        ejs.renderFile('./views/users.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
+        ejs.renderFile('./views/users.ejs', { session: req.session}, (err, html)=>{
             if (err){
                 console.log(err);
                 return

@@ -67,7 +67,7 @@ CREATE TABLE `users` (
 -- A tábla adatainak kiíratása `user`
 --
 
-INSERT INTO `user` (`ID`, `name`, `email`, `passwd`, `membership_date`, `role`) VALUES
+INSERT INTO `users` (`ID`, `name`, `email`, `passwd`, `membership_date`, `role`) VALUES
 (1, 'Ári', 'ari@turr.hu', '29b904ffa51141df00d6afedd88f2f18936511e2', '2024-11-05', 'admin'),
 (2, 'Bali', 'bali@turr.hu', '342f5bba34b5cc82ecc06d9b059ad57bd0dac5cd', '2024-11-05', 'admin');
 
@@ -93,7 +93,7 @@ ALTER TABLE `rentals`
 --
 -- A tábla indexei `user`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -115,7 +115,7 @@ ALTER TABLE `rentals`
 --
 -- AUTO_INCREMENT a táblához `user`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
@@ -126,7 +126,7 @@ ALTER TABLE `user`
 -- Megkötések a táblához `rentals`
 --
 ALTER TABLE `rentals`
-  ADD CONSTRAINT `rentals_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `rentals_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `rentals_ibfk_2` FOREIGN KEY (`itemID`) REFERENCES `items` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
