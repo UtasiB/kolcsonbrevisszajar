@@ -1,3 +1,7 @@
+<%- include('header') %>
+
+<%- include('message') %>
+
 <div class="p-3">
     <h3>Felhasználók</h3>
     <hr>
@@ -13,7 +17,19 @@
             </tr>
         </thead>
         <tbody>
-          <!--- TODO: ejs-es cucc-->
+            <% users.forEach(function(user, index) { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.membership_date %></td>
+                    <td><%= user.role %></td>
+                    <td class="text-end">
+                        <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-primary">Szerkesztés</a>
+                        <a href="/users/delete/<%= user.id %>" class="btn btn-sm btn-danger">Törlés</a>
+                    </td>
+                </tr>
+            <% }); %>
         </tbody>
         <tfoot>
             <tr>
@@ -22,3 +38,5 @@
         </tfoot>
     </table>
 </div>
+
+<%- include('footer') %>

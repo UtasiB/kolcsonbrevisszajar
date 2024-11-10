@@ -54,20 +54,35 @@ router.get('/listing', (req, res) => {
 });
 
 router.get('/loans', (req, res)=>{
-    if (req.session.isLoggedIn){
-
-       
-        ejs.renderFile('./views/loans.ejs', { session: req.session}, (err, html)=>{
-            if (err){
+    const query = `
+            SELECT rentals.*, items.title 
+            FROM rentals 
+            JOIN items ON rentals.itemID = items.ID 
+        `;
+        db.query(query,  (err, results) => {
+            if (err) {
                 console.log(err);
-                return
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/');
+                return;
             }
-            req.session.msg = '';
-            res.send(html);
+            results.forEach(item => {
+                item.rental_date = moment(item.rental_date).format('YYYY.MM.DD.');
+                if (item.return_date) {
+                    item.return_date = moment(item.return_date).format('YYYY.MM.DD.');
+                }
+            });
+            ejs.renderFile('./views/loans.ejs', { session: req.session, rentals: results }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
         });
-        return
-        
-    }
+        return;
     res.redirect('/');
 });
 
@@ -125,17 +140,29 @@ router.get('/loan', (req, res) => {
 
 router.get('/users', (req, res)=>{
     if (req.session.isLoggedIn){
-
-       
-        ejs.renderFile('./views/users.ejs', { session: req.session}, (err, html)=>{
+        db.query(`SELECT * FROM users`, (err, results)=>{
             if (err){
-                console.log(err);
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/listing');
                 return
             }
-            req.session.msg = '';
-            res.send(html);
+            results.forEach(user => {
+                user.membership_date = moment(user.membership_date).format('YYYY.MM.DD.');
+            });
+
+            ejs.renderFile('./views/users.ejs', { session: req.session, users: results}, (err, html)=>{
+                if (err){
+                    console.log(err);
+                    return
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
+            return
         });
-        return
+       
+        return;
         
     }
     res.redirect('/');

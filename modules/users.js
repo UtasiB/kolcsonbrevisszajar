@@ -91,4 +91,11 @@ console.log(CryptoJS.SHA1(passwd).toString())
     });
 });
 
+router.get('/logout', (req, res)=>{
+    req.session.destroy();
+    res.redirect('/');
+});
+
+
+
 module.exports = router;
