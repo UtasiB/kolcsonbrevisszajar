@@ -8,8 +8,7 @@
                 <th>Cím</th>
                 <th>Kölcsönzés kezdete</th>
                 <th>Visszahozás dátuma</th>
-                <th></th>
-
+                <th class="text-end">Visszahozás</th>
             </tr>
         </thead>
         <tbody>
@@ -19,11 +18,23 @@
                     <td><%= rental.rental_date %></td>
                     <td><%= rental.return_date %></td>
                     <form action="/loans/visszahozatal" method="post">
-                    <td><input class="btn btn-primary mb-3" type="submit" value="Visszavétel"></td>   
+                        <input type="hidden" name="cardID" value="<%= rental.itemID %>">
+                        <% if(rental.return_date == undefined)   { %>
+                            <td class="text-end"><input class="btn btn-primary mb-3" type="submit" value="Visszavétel"></td>   
+                        <%  } else {%>
+                            <td class="text-end"><input class="btn btn-primary mb-3" type="submit" value="Visszavétel" disabled></td>
+                        <% }%>
+
+                        
                     </form>
                 </tr>
             <% }); %>
+            
         </tbody>
     </table>
+    <div>
+        <p><strong><%= bookCount %></strong> könyv és <strong><%= filmCount %></strong> film van.</p>
+        <p>Összesen <strong><%= bookCount + filmCount %></strong> elem van.</p>
+    </div>
 </div>
 <%- include('footer') %>

@@ -83,7 +83,7 @@ router.get('/loans', (req, res)=>{
             });
         });
         return;
-    res.redirect('/');
+        
 });
 
 
@@ -103,17 +103,22 @@ router.get('/logout', (req, res)=>{
 
 router.get('/loan', (req, res) => {
     if (req.session.isLoggedIn) {
+
+        let bookCount = 0;
+        let filmCount = 0
+
         const query = `
-            SELECT rentals.*, items.title 
+            SELECT rentals.*, items.title, items.type
             FROM rentals 
             JOIN items ON rentals.itemID = items.ID 
             WHERE rentals.userID = ?
         `;
+        req.session.rentalsID = req.body.ID;
         db.query(query, [req.session.userID], (err, results) => {
             if (err) {
                 console.log(err);
                 req.session.msg = 'Database error!';
-                req.session.severity = 'danger';
+                req.session.severity = 'danger';    
                 res.redirect('/');
                 return;
             }
@@ -122,8 +127,16 @@ router.get('/loan', (req, res) => {
                 if (item.return_date) {
                     item.return_date = moment(item.return_date).format('YYYY.MM.DD.');
                 }
+                if(item.type == 'könyv'){
+                    bookCount++;
+                }
+                if(item.type == 'film'){
+                    filmCount++;
+                }
             });
-            ejs.renderFile('./views/loan.ejs', { session: req.session, rentals: results }, (err, html) => {
+
+
+            ejs.renderFile('./views/loan.ejs', { session: req.session, rentals: results, bookCount, filmCount }, (err, html) => {
                 if (err) {
                     console.log(err);
                     return;
@@ -132,6 +145,11 @@ router.get('/loan', (req, res) => {
                 res.send(html);
             });
         });
+       
+    
+            
+        
+
         return;
     }
     res.redirect('/');

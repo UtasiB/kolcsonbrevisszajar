@@ -38,10 +38,12 @@ router.post('/kolcsonzes', (req, res) => {
     res.redirect('/');
 })
 
-router.get('/visszahozatal', (req, res) => {
+router.post('/visszahozatal', (req, res) => {
     if(req.session.isLoggedIn) {
-        
-        db.query(`UPDATE rentals SET return_date = ? WHERE userID = ?`, [new Date(), req.session.userID], (err, result) => {    
+
+        let itemID = req.body.cardID;
+
+        db.query(`UPDATE rentals SET return_date = ? WHERE userID = ? and itemID = ?`, [new Date(), req.session.userID, itemID, ], (err, result) => {    
             if (err) {
                 console.log(err);
                 req.session.msg = 'Database error!';
@@ -49,15 +51,24 @@ router.get('/visszahozatal', (req, res) => {
                 res.redirect('/listing');
                 return;
             }
-            req.session.msg = 'Loan successful!';
-            req.session.severity = 'success';
-            res.redirect('/listing');
 
+            db.query(`UPDATE items SET available = 1 WHERE ID=?`, [itemID], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    req.session.msg = 'Database error!';
+                    req.session.severity = 'danger';
+                    res.redirect('/listing');
+                    return;
+                }
+                req.session.msg = 'Loan successful!';
+                req.session.severity = 'success';
+                res.redirect('/listing');
+            });
         });
         return;
-    }
-    res.redirect('/');
+    }   
 
+    res.redirect('/');
 });
 
 

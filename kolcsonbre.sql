@@ -31,7 +31,7 @@ CREATE TABLE `items` (
   `ID` int(11) NOT NULL,
   `title` varchar(40) NOT NULL,
   `type` enum('könyv','film') NOT NULL,
-  `avilable` tinyint(1) NOT NULL
+  `available` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 -- --------------------------------------------------------
