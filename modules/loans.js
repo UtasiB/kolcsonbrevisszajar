@@ -42,8 +42,9 @@ router.post('/visszahozatal', (req, res) => {
     if(req.session.isLoggedIn) {
 
         let itemID = req.body.cardID;
-
-        db.query(`UPDATE rentals SET return_date = ? WHERE userID = ? and itemID = ?`, [new Date(), req.session.userID, itemID, ], (err, result) => {    
+        let rentalID = req.body.rentalID;
+        console.log(rentalID);
+        db.query(`UPDATE rentals SET return_date = ? WHERE userID = ? and itemID = ? and ID = ?`, [new Date(), req.session.userID, itemID, rentalID], (err, result) => {    
             if (err) {
                 console.log(err);
                 req.session.msg = 'Database error!';

@@ -19,6 +19,7 @@
                     <td><%= rental.return_date %></td>
                     <form action="/loans/visszahozatal" method="post">
                         <input type="hidden" name="cardID" value="<%= rental.itemID %>">
+                        <input type="hidden" name="rentalID" value="<%= rental.ID %>">
                         <% if(rental.return_date == undefined)   { %>
                             <td class="text-end"><input class="btn btn-primary mb-3" type="submit" value="Visszavétel"></td>   
                         <%  } else {%>
