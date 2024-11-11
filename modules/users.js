@@ -6,7 +6,7 @@ const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 router.post('/reg', (req, res) => {
     
-    let { name, email, passwd, confirm } = req.body;
+    let {name, email, passwd, confirm } = req.body;
     let today = new Date();
     if (!name || !email || !passwd || !confirm) {
         req.session.msg = 'Missing data!';
@@ -94,8 +94,27 @@ console.log(CryptoJS.SHA1(passwd).toString())
 router.get('/logout', (req, res)=>{
     req.session.destroy();
     res.redirect('/');
-});
+}); 
 
+router.post('/delete/:id', (req, res) => {
+    db.query(`DELETE FROM users WHERE ID = ?`, [req.params.id], (err, results) => {
+        if (err) {
+            req.session.msg = 'Database error!';
+            req.session.severity = 'danger';
+            res.redirect('/');
+            return;
+        }
+        if (results.affectedRows === 0) {
+            req.session.msg = 'Invalid credentials!';
+            req.session.severity = 'danger';
+            res.redirect('/');
+            return;
+        }
+        req.session.msg = 'User deleted!';
+        req.session.severity = 'info';
+        res.redirect('/users');
+    });
+});
 
 
 module.exports = router;
