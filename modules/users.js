@@ -2,56 +2,57 @@ const express = require('express');
 var CryptoJS = require("crypto-js");
 const router = express.Router();
 const db = require('./database');
+const ejs = require('ejs');
+const moment = require('moment');
+
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
+// User registration route
 router.post('/reg', (req, res) => {
-    
-    let {name, email, passwd, confirm } = req.body;
+    let { name, email, passwd, confirm } = req.body;
     let today = new Date();
     if (!name || !email || !passwd || !confirm) {
         req.session.msg = 'Missing data!';
         req.session.severity = 'danger';
         res.redirect('/reg');
-        return
+        return;
     }
 
-    if (passwd != confirm){
-        req.session.msg = 'Passwords dont match!';
+    if (passwd !== confirm) {
+        req.session.msg = 'Passwords don\'t match!';
         req.session.severity = 'danger';
         res.redirect('/reg');
-        return
+        return;
     }
 
-    if (!passwd.match(passwdRegExp)){
+    if (!passwd.match(passwdRegExp)) {
         req.session.msg = 'Password is weak!';
         req.session.severity = 'danger';
-        res.redirect('/reg'); 
-        return
+        res.redirect('/reg');
+        return;
     }
 
-    db.query(`SELECT * FROM users WHERE email=?`, [email], (err, results)=>{
-        if (err){
-            req.session.msg = 'This e-mail already registered!';
+    db.query(`SELECT * FROM users WHERE email=?`, [email], (err, results) => {
+        if (err) {
+            req.session.msg = 'This e-mail is already registered!';
             req.session.severity = 'danger';
             res.redirect('/reg');
-            return
+            return;
         }
 
         db.query(`INSERT INTO users (ID, name, email, passwd, role, membership_date) VALUES("", ?, ?, SHA1(?), 'user', ?)`, 
-            [name, email, passwd, today], (err, results)=>{
-            if (err){
-                req.session.msg = 'Database error!';
-                req.session.severity = 'danger';
-                res.redirect('/reg');
-                return
-            }
-            req.session.msg = 'User registered!';
-            req.session.severity = 'success';
-            res.redirect('/');
-            return
-        })
+            [name, email, passwd, today], (err, results) => {
+                if (err) {
+                    req.session.msg = 'Database error!';
+                    req.session.severity = 'danger';
+                    res.redirect('/reg');
+                    return;
+                }
+                req.session.msg = 'User registered!';
+                req.session.severity = 'success';
+                res.redirect('/');
+            });
     });
-
 });
 
 router.post('/login', (req, res)=>{
@@ -114,6 +115,52 @@ router.post('/delete/:id', (req, res) => {
         req.session.severity = 'info';
         res.redirect('/users');
     });
+});
+
+router.get('/edit/:id', (req, res) => {
+    if (req.session.isLoggedIn) {
+        db.query(`SELECT * FROM users WHERE ID = ?`, [req.params.id], (err, results) => {
+            if (err || results.length === 0) {
+                req.session.msg = 'User not found!';
+                req.session.severity = 'danger';
+                res.redirect('/users');
+                return;
+            }
+            results.forEach(item => {
+                item.membership_date = moment(item.membership_date).format('YYYY.MM.DD.');
+                if (item.membership_date) {
+                    item.membership_date= moment(item.membership_date).format('YYYY.MM.DD.');
+                }
+            });
+            ejs.renderFile('./views/editUser.ejs', { session: req.session, user: results[0] }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                res.send(html);
+            });
+        });
+    } else {
+        res.redirect('/');
+    }
+});
+router.post('/update/:id', (req, res) => {
+    if (req.session.isLoggedIn) {
+        const { name, email, role } = req.body;
+        db.query(`UPDATE users SET name = ?, email = ?, role = ? WHERE ID = ?`, [name, email, role, req.params.id], (err, results) => {
+            if (err) {
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/users');
+                return;
+            }
+            req.session.msg = 'User updated successfully!';
+            req.session.severity = 'success';
+            res.redirect('/users');
+        });
+    } else {
+        res.redirect('/');
+    }
 });
 
 

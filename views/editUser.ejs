@@ -1,0 +1,32 @@
+<%- include('header') %>
+<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+<%- include('message') %>
+
+<div class="p-3">
+    <h3>Edit User</h3>
+    <form action="/users/update/<%= user.ID %>" method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="membership_date" class="form-label">Membership Date</label>
+            <input type="text" class="form-control" id="membership_date" name="membership_date" value="<%= user.membership_date %>" readonly>
+        </div>
+        <div class="mb-3">  
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role">
+                <option value="user" <%= user.role === 'user' ? 'selected' : '' %>>User</option>
+                <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update User</button>
+    </form>
+</div>
+
+<%- include('footer') %>
