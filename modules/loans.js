@@ -33,18 +33,28 @@ router.post('/kolcsonzes', (req, res) => {
             req.session.severity = 'success';
             res.redirect('/listing');
         });
-        return;
+        return; 
     }
     res.redirect('/');
 })
 
 router.post('/visszahozatal', (req, res) => {
     if(req.session.isLoggedIn) {
-
         let itemID = req.body.cardID;
         let rentalID = req.body.rentalID;
-        console.log(rentalID);
-        db.query(`UPDATE rentals SET return_date = ? WHERE userID = ? and itemID = ? and ID = ?`, [new Date(), req.session.userID, itemID, rentalID], (err, result) => {    
+
+        if(req.session.userRole === "admin") {
+        } else {
+            db.query(`SELECT * FROM rentals WHERE ID = ? AND userID = ?`, [rentalID, req.session.userID], (err, results) => {
+                if (err || results.length === 0) {
+                    req.session.msg = 'You do not have permission to return this rental.';
+                    req.session.severity = 'danger';
+                    return res.redirect('/listing');
+                }
+            });
+        }
+
+        db.query(`UPDATE rentals SET return_date = ? WHERE ID = ?`, [new Date(), rentalID], (err, result) => {    
             if (err) {
                 console.log(err);
                 req.session.msg = 'Database error!';
@@ -61,16 +71,60 @@ router.post('/visszahozatal', (req, res) => {
                     res.redirect('/listing');
                     return;
                 }
-                req.session.msg = 'Loan successful!';
+                req.session.msg = 'Item returned successfully!';
                 req.session.severity = 'success';
                 res.redirect('/listing');
             });
         });
-        return;
-    }   
-
-    res.redirect('/');
+    } else {   
+        res.redirect('/');
+    }
 });
 
+router.post('/delete/:id', (req, res) => {
+    if (req.session.isLoggedIn) {
+        let rentalID = req.params.id;
+        let userID = req.session.userID;
+
+        db.query(`SELECT itemID FROM rentals WHERE ID = ? AND userID = ?`, [rentalID, userID], (err, results) => {
+            if (err) {
+                console.log(err);
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                return res.redirect('/listing');
+            }
+            if (results.length === 0) {
+                req.session.msg = 'Rental not found or you do not have permission to delete this rental.';
+                req.session.severity = 'danger';
+                return res.redirect('/listing');
+            }
+
+            let itemID = results[0].itemID;
+
+            db.query(`DELETE FROM rentals WHERE ID = ? AND userID = ?`, [rentalID, userID], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    req.session.msg = 'Database error!';
+                    req.session.severity = 'danger';
+                    return res.redirect('/listing');
+                }
+
+            db.query(`UPDATE items SET available = 1 WHERE ID = ?`, [itemID], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        req.session.msg = 'Database error!';
+                        req.session.severity = 'danger';
+                        return res.redirect('/listing');
+                    }
+                    req.session.msg = 'Rental deleted successfully!';
+                    req.session.severity = 'success';
+                    res.redirect('/listing');
+                });
+            });
+        });
+    } else {
+        res.redirect('/');
+    }
+});
 
 module.exports = router;

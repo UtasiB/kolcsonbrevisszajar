@@ -22,18 +22,28 @@
                     <td><%= rental.rental_date %></td>
                     <td><%= rental.return_date %></td>
                     <input type="hidden" name="rentalID" value="<%= rental.ID %>">
-                    <td class="text-end">
-                        <form action="/loans/delete/<%= rental.ID  %>" method="POST" >
-                            <button type="submit" class="btn btn-danger mb-3">Törlés</button>
-                        </form>
-                    <% if(rental.return_date == undefined){ %>
-                        <form action="/loans/visszahozatal" method="post">
-                            <td class="text-end"><input class="btn btn-primary mb-3" type="submit" value="Visszavétel"></td>   
-                        </form>
-                        <%  } else {%>
-                            <td class="text-end"><input class="btn btn-primary mb-3" type="submit" value="Visszavétel" disabled></td>
-                        <% }%>
-                    </td>
+                   <td class="text-end">
+                       <div style="display: inline-block; margin-right: 10px;">
+                           <form action="/loans/delete/<%= rental.ID  %>" method="POST">
+                               <button type="submit" class="btn btn-danger mb-3">Törlés</button>
+                           </form>
+                       </div>
+                       <% if(rental.return_date == undefined) { %>
+                           <div style="display: inline-block;">
+                               <form action="/loans/visszahozatal" method="post">
+                                   <input type="hidden" name="cardID" value="<%= rental.itemID %>"> 
+                                   <input type="hidden" name="rentalID" value="<%= rental.ID %>"> 
+                                   <input class="btn btn-primary mb-3" type="submit" value="Visszavétel">   
+                               </form>
+                           </div>
+                       <% } else { %>
+                           <div style="display: inline-block;">
+                               <input class="btn btn-primary mb-3" type="button" value="Visszavétel" disabled>
+                           </div>
+                       <% } %>
+                   </td>
+                   
+                    
                 </tr>
             <% }); %>
         </tbody>
