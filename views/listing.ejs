@@ -1,20 +1,40 @@
 <%- include('header') %>
 <%- include('message') %>
 <div class="container">
-    <h1>Available Items</h1>
-    <div class="card-container">
+    <% if(session.userRole == "admin") {%>
+        <h1>Tárgy hozzáadása</h1>
+        <form action="/loans/hozzaadas" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="title" placeholder="">
+                <label for="title">Cím</label>
+            </div>
+            <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="type">
+                <option selected>Tipus választása:</option>
+                <option value="könyv">Könyv</option>
+                <option value="film">Film</option>
+            </select>
+              
+            <input class="btn btn-primary mb-3" type="submit" value="Add">
+        
+    <%} %>
+ 
+<h1>Elérhető tárgyak</h1>
+    <div class="row">
         <% items.forEach(function(item) { %>
             <% if (item.available > 0) { %>
-                <div class="card mb-3" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= item.title %></h5>
-                        <p class="card-text">Type: <%= item.type %></p>
-                        <form action="/loans/kolcsonzes" method="post">
-                            <input type="hidden" name="cardID" value="<%= item.ID %>">
-                            <input class="btn btn-primary mb-3" type="submit" value="Kölcsönzés">
-                        </form>
+                <div class="col-md-4 mb-2">
+                    <div class="card mb-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= item.title %></h5>
+                            <p class="card-text">Type: <%= item.type %></p>
+                            <form action="/loans/kolcsonzes" method="post">
+                                <input type="hidden" name="cardID" value="<%= item.ID %>">
+                                <input class="btn btn-primary mb-3" type="submit" value="Kölcsönzés">
+                            </form>
+                        </div>
                     </div>
                 </div>
+                
             <% } %>
         <% }); %>
     </div>
