@@ -53,38 +53,38 @@ router.get('/listing', (req, res) => {
     res.redirect('/');
 });
 
-router.get('/loans', (req, res)=>{
+router.get('/loans', (req, res)=> {
     const query = `
-            SELECT rentals.*, items.title 
-            FROM rentals 
-            JOIN items ON rentals.itemID = items.ID 
-        `;
-        db.query(query,  (err, results) => {
+        SELECT rentals.*, items.title, users.name 
+        FROM rentals 
+        JOIN items ON rentals.itemID = items.ID 
+        JOIN users ON rentals.userID = users.ID
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            req.session.msg = 'Database error!';
+            req.session.severity = 'danger';
+            res.redirect('/');
+            return;
+        }
+        results.forEach(item => {
+            item.rental_date = moment(item.rental_date).format('YYYY.MM.DD.');
+            if (item.return_date) {
+                item.return_date = moment(item.return_date).format('YYYY.MM.DD.');
+            }
+        });
+        ejs.renderFile('./views/loans.ejs', { session: req.session, rentals: results }, (err, html) => {
             if (err) {
                 console.log(err);
-                req.session.msg = 'Database error!';
-                req.session.severity = 'danger';
-                res.redirect('/');
                 return;
             }
-            results.forEach(item => {
-                item.rental_date = moment(item.rental_date).format('YYYY.MM.DD.');
-                if (item.return_date) {
-                    item.return_date = moment(item.return_date).format('YYYY.MM.DD.');
-                }
-            });
-            ejs.renderFile('./views/loans.ejs', { session: req.session, rentals: results }, (err, html) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                req.session.msg = '';
-                res.send(html);
-            });
+            req.session.msg = '';
+            res.send(html);
         });
-        return;
-        
+    });
 });
+
 
 
 router.get('/logout', (req, res)=>{

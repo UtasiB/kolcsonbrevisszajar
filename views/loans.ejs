@@ -7,46 +7,44 @@
     <table class="table table-striped table-hovered"> 
         <thead>
             <tr>
-                <th>Felhasználó ID-ja</th>
+                <th>Felhasználó Neve</th>
                 <th>Cím</th>
                 <th>Kölcsönzés kezdete</th>
                 <th>Visszahozás dátuma</th>
                 <th class="text-end">Müveletek</th>
             </tr>
         </thead>
-        <tbody>
-            <% rentals.forEach(function(rental) { %>
-                <tr>
-                    <td><%= rental.userID %></td>
-                    <td><%= rental.title %></td>
-                    <td><%= rental.rental_date %></td>
-                    <td><%= rental.return_date %></td>
-                    <input type="hidden" name="rentalID" value="<%= rental.ID %>">
-                   <td class="text-end">
-                       <div style="display: inline-block; margin-right: 10px;">
-                           <form action="/loans/delete/<%= rental.ID  %>" method="POST">
-                               <button type="submit" class="btn btn-danger mb-3">Törlés</button>
-                           </form>
-                       </div>
-                       <% if(rental.return_date == undefined) { %>
-                           <div style="display: inline-block;">
-                               <form action="/loans/visszahozatal" method="post">
-                                   <input type="hidden" name="cardID" value="<%= rental.itemID %>"> 
-                                   <input type="hidden" name="rentalID" value="<%= rental.ID %>"> 
-                                   <input class="btn btn-primary mb-3" type="submit" value="Visszavétel">   
-                               </form>
-                           </div>
-                       <% } else { %>
-                           <div style="display: inline-block;">
-                               <input class="btn btn-primary mb-3" type="button" value="Visszavétel" disabled>
-                           </div>
-                       <% } %>
-                   </td>
-                   
-                    
-                </tr>
-            <% }); %>
-        </tbody>
+       <tbody>
+       <% rentals.forEach(function(rental) { %>
+       <tr>
+           <td><%= rental.name %></td>
+           <td><%= rental.title %></td>
+           <td><%= rental.rental_date %></td>
+           <td><%= rental.return_date %></td>
+           <input type="hidden" name="rentalID" value="<%= rental.ID %>">
+           <td class="text-end">
+               <div style="display: inline-block; margin-right: 10px;">
+                   <form action="/loans/delete/<%= rental.ID %>" method="POST">
+                       <button type="submit" class="btn btn-danger mb-3">Törlés</button>
+                   </form>
+               </div>
+               <% if (rental.return_date == undefined) { %>
+               <div style="display: inline-block;">
+                   <form action="/loans/visszahozatal" method="post">
+                       <input type="hidden" name="cardID" value="<%= rental.itemID %>">
+                       <input type="hidden" name="rentalID" value="<%= rental.ID %>">
+                       <input class="btn btn-primary mb-3" type="submit" value="Visszavétel">
+                   </form>
+               </div>
+               <% } else { %>
+               <div style="display: inline-block;">
+                   <input class="btn btn-primary mb-3" type="button" value="Visszavétel" disabled>
+               </div>
+               <% } %>
+           </td>
+       </tr>
+       <% }); %>
+       </tbody>
     </table>
 </div>
 

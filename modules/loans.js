@@ -73,7 +73,13 @@ router.post('/visszahozatal', (req, res) => {
                 }
                 req.session.msg = 'Item returned successfully!';
                 req.session.severity = 'success';
-                res.redirect('/loan');
+                if(req.session.userRole == "admin"){
+                    res.redirect('/loans');
+                }
+                else{
+                    res.redirect('/loan');
+                }          
+
             });
         });
     } else {   
