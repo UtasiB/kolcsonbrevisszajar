@@ -1,23 +1,10 @@
 <%- include('header') %>
 <%- include('message') %>
 <div class="container">
-    <% if(session.userRole == "admin") {%>
-        <h1>Tárgy hozzáadása</h1>
-        <form action="/loans/hozzaadas" method="post">
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" name="title" placeholder="">
-                <label for="title">Cím</label>
-            </div>
-            <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="type">
-                <option selected>Tipus választása:</option>
-                <option value="könyv">Könyv</option>
-                <option value="film">Film</option>
-            </select>
-              
-            <input class="btn btn-primary mb-3" type="submit" value="Add">
-        
-    <%} %>
- 
+    
+  
+       
+    
 <h1>Elérhető tárgyak</h1>
     <div class="row">
         <% items.forEach(function(item) { %>

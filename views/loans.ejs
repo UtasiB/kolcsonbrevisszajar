@@ -2,6 +2,22 @@
 
 <%- include('message') %>
 <div class="p-3">
+    <h1>Tárgy hozzáadása</h1>
+    <form action="/loans/hozzaadas" method="post">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="title" placeholder="">
+            <label for="title">Cím</label>
+        </div>
+        <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="type">
+            <option selected>Tipus választása:</option>
+            <option value="könyv">Könyv</option>
+            <option value="film">Film</option>
+        </select>
+          
+        <input class="btn btn-primary mb-3" type="submit" value="Add">
+    
+    </form>
+
     <h3>Összes kölcsönzés</h3>
     <hr>
     <table class="table table-striped table-hovered"> 

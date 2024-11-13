@@ -96,7 +96,7 @@ router.post('/hozzaadas', (req, res) => {
         if(title == '' || type == ''|| type == 'Tipus választása:') {
             req.session.msg = 'Please fill out all fields!';
             req.session.severity = 'danger';
-            res.redirect('/listing');
+            res.redirect('/loans');
             return;
         }
 
@@ -105,12 +105,12 @@ router.post('/hozzaadas', (req, res) => {
                 console.log(err);
                 req.session.msg = 'Database error!';
                 req.session.severity = 'danger';
-                res.redirect('/listing');
+                res.redirect('/loans');
                 return;
             }
             req.session.msg = 'Item added!';
             req.session.severity = 'success';
-            res.redirect('/listing');
+            res.redirect('/loans');
         });
         return;
     }
@@ -163,5 +163,6 @@ router.post('/delete/:id', (req, res) => {
         res.redirect('/');
     }
 });
+
 
 module.exports = router;

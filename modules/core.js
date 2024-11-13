@@ -39,6 +39,7 @@ router.get('/listing', (req, res) => {
                 res.redirect('/');
                 return;
             }
+            
             ejs.renderFile('./views/listing.ejs', { session: req.session, items: results }, (err, html) => {
                 if (err) {
                     console.log(err);
@@ -52,6 +53,9 @@ router.get('/listing', (req, res) => {
     }
     res.redirect('/');
 });
+
+
+
 
 router.get('/loans', (req, res)=> {
     const query = `
@@ -184,6 +188,59 @@ router.get('/users', (req, res)=>{
         
     }
     res.redirect('/');
+});
+
+router.get('/statistics', (req, res)=>{
+    if (req.session.isLoggedIn){
+            db.query(`
+                SELECT users.ID, users.name, COUNT(rentals.userID) AS rentalCount
+                FROM users
+                JOIN rentals ON users.ID = rentals.userID
+                GROUP BY users.ID, users.name
+                ORDER BY rentalCount DESC
+                LIMIT 10
+            `, (err, userResults) => {
+                if (err) {
+                    console.log(err);
+                    req.session.msg = 'Database error!';
+                    req.session.severity = 'danger';
+                    res.redirect('/');
+                    return;
+                }
+
+            db.query(`
+                SELECT items.ID, items.title, COUNT(rentals.itemID) AS rentalCount
+                FROM items
+                JOIN rentals ON items.ID = rentals.itemID
+                GROUP BY items.ID, items.title
+                ORDER BY rentalCount DESC
+                LIMIT 10
+            `, (err, itemResults) => {
+            if (err) {
+                console.log(err);
+                req.session.msg = 'Database error!';
+                req.session.severity = 'danger';
+                res.redirect('/');
+                return;
+            }
+
+            ejs.renderFile('./views/statistics.ejs', { session: req.session, users: userResults, items: itemResults }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
+            return;
+        });
+     return;
+
+    });
+    return;
+    
+}
+res.redirect('/');
 });
 
 
