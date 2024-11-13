@@ -1,15 +1,32 @@
 <%- include('header') %>
 <%- include('message') %>
 <div class="container">
-    
-  
-       
-    
-<h1>Elérhető tárgyak</h1>
-    <div class="row">
+    <!-- Search Bar -->
+    <div class="mb-3">
+        <input type="text" id="searchbar" class="form-control" placeholder="Search for items..." onkeyup="search_items()">
+    </div>
+
+    <% if(session.userRole == "admin") {%>
+        <h1>Tárgy hozzáadása</h1>
+        <form action="/loans/hozzaadas" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="title" placeholder="" required>
+                <label for="title">Cím</label>
+            </div>
+            <select class="form-select form-select-lg mb-3" name="type" required>
+                <option value="">Tipus választása:</option>
+                <option value="könyv">Könyv</option>
+                <option value="film">Film</option>
+            </select>
+            <input class="btn btn-primary mb-3" type="submit" value="Add">
+        </form>
+    <% } %>
+
+    <h1>Elérhető tárgyak</h1>
+    <div class="row" id="items-container">
         <% items.forEach(function(item) { %>
             <% if (item.available > 0) { %>
-                <div class="col-md-4 mb-2">
+                <div class="col-md-4 mb-2 animals">
                     <div class="card mb-3" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title"><%= item.title %></h5>
@@ -21,9 +38,25 @@
                         </div>
                     </div>
                 </div>
-                
             <% } %>
         <% }); %>
     </div>
 </div>
+
 <%- include('footer') %>
+<script>
+function search_items() {
+    let input = document.getElementById('searchbar').value;
+    input = input.toLowerCase();
+    let items = document.getElementsByClassName('animals');
+
+    for (let i = 0; i < items.length; i++) {
+        const title = items[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
+        if (title.includes(input)) {
+            items[i].style.display = "block"; // Show item if it matches
+        } else {
+            items[i].style.display = "none"; // Hide item if it doesn't match
+        }
+    }
+}
+</script>
